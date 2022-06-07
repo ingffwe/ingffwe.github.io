@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>三维卷积 - 起司其四的个人主页</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="三维卷积" />
+<meta property="og:description" content="一、3D卷积理论 https://blog.csdn.net/YOULANSHENGMENG/article/details/121328554 https://blog.csdn.net/qinxin_ni/article/details/121664931 p1: 先介绍二维卷积 那用过CNN的同学都知道 一般情况下使用的卷积不是单通道的 多通道卷积看起来和三维卷积有一样的深度，但两者之" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-06-07T18:20:46+08:00" />
+<meta property="article:modified_time" content="2022-06-07T18:20:46+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="三维卷积"/>
+<meta name="twitter:description" content="一、3D卷积理论 https://blog.csdn.net/YOULANSHENGMENG/article/details/121328554 https://blog.csdn.net/qinxin_ni/article/details/121664931 p1: 先介绍二维卷积 那用过CNN的同学都知道 一般情况下使用的卷积不是单通道的 多通道卷积看起来和三维卷积有一样的深度，但两者之"/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" /><link rel="prev" href="https://ingffwe.github.io/posts/first_post/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "三维卷积",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/ingffwe.github.io\/posts\/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF\/"
+        },"genre": "posts","wordcount":  5250 ,
+        "url": "https:\/\/ingffwe.github.io\/posts\/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF\/","datePublished": "2022-06-07T18:20:46+08:00","dateModified": "2022-06-07T18:20:46+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "起司"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="起司其四的个人主页">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="起司其四的个人主页">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">三维卷积</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>起司</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-06-07">2022-06-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;5250 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;11 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#一3d卷积理论">一、3D卷积理论</a></li>
+    <li><a href="#二3d卷积应用">二、3D卷积应用</a></li>
+    <li><a href="#三经典模型">三、经典模型</a>
+      <ul>
+        <li><a href="#32-视频行为识别-i3d">3.2 视频行为识别-I3D</a></li>
+        <li><a href="#31-3d目标检测-voxnet">3.1 3D目标检测-VoxNet</a></li>
+        <li><a href="#33-医学图像分割-3d-unet">3.3 医学图像分割-3D-UNET</a></li>
+      </ul>
+    </li>
+    <li><a href="#四实验">四、实验</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="一3d卷积理论">一、3D卷积理论</h2>
+<p><a href="https://blog.csdn.net/YOULANSHENGMENG/article/details/121328554" target="_blank" rel="noopener noreffer">https://blog.csdn.net/YOULANSHENGMENG/article/details/121328554</a></p>
+<p><a href="https://blog.csdn.net/qinxin_ni/article/details/121664931" target="_blank" rel="noopener noreffer">https://blog.csdn.net/qinxin_ni/article/details/121664931</a></p>
+<p>p1:</p>
+<p>先介绍二维卷积</p>
+<p>那用过CNN的同学都知道 一般情况下使用的卷积不是单通道的</p>
+<p>多通道卷积看起来和三维卷积有一样的深度，但两者之间是有本质的区别的。</p>
+<p>这里假设输入层是一个 5 x 5 x 3 <a href="https://so.csdn.net/so/search?q=%e7%9f%a9%e9%98%b5&amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener noreffer">矩阵</a>，它有 3 个通道。过滤器则是一个 3 x 3 x 3 矩阵。首先，过滤器中的每个卷积核都应用到输入层的 3 个通道，执行 3 次卷积后得到了尺寸为 3 x 3 的 3 个通道。</p>
+<p>过滤器每个<a href="https://so.csdn.net/so/search?q=%e5%8d%b7%e7%a7%af%e6%a0%b8&amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener noreffer">卷积核</a>分别应用到输入层的 3 个通道上，之后，这 3 个通道都合并到一起（元素级别的加法）组成了一个大小为 3 x 3 x 1 的单通道。这个通道是输入层（5 x 5 x 3 矩阵）使用了过滤器（3 x 3 x 3 矩阵）后得到的结果。</p>
+<p>如果卷积核数量小于前一层<a href="https://so.csdn.net/so/search?q=%e9%80%9a%e9%81%93&amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener noreffer">通道</a>数怎么办？这就是3D卷积的思想来源。</p>
+<p>p2</p>
+<p>三维卷积输入多了深度C这个维度，输入是高度H<em>宽度W</em>深度C的三维矩阵</p>
+<h2 id="二3d卷积应用">二、3D卷积应用</h2>
+<p><a href="https://github.com/amusi/CVPR2022-Papers-with-Code#3D-Object-Detection" target="_blank" rel="noopener noreffer">https://github.com/amusi/CVPR2022-Papers-with-Code#3D-Object-Detection</a></p>
+<h2 id="三经典模型">三、经典模型</h2>
+<h3 id="32-视频行为识别-i3d">3.2 视频行为识别-I3D</h3>
+<p>接下来将具体介绍应用三维卷积的几个领域</p>
+<p>首先由我给大家介绍视频行为识别 也可以叫视频理解</p>
+<p>p1</p>
+<p>视频</p>
+<p>首先最常见的就是视频的分类任务 和图片的分类任务一样 给机器看一段视频 让机器理解这段视频的含义</p>
+<p>CNN-LSTM：<strong>CNN用来抽特征 LSTM用来处理时序信息</strong></p>
+<p>对于a 可能更像是一个图像分类的问题 每张图片用CNN抽特征 之后全扔给一个LSTM网络 因为LSTM可以进行时序建模 经过一些计算把最后一个时间戳上的结果交给一个全连接层然后就开始做分类任务了</p>
+<p>但是结果不是特别好 所以后来就被抛弃了</p>
+<p>p2、3   C3D</p>
+<p>这篇文章是facebook团队发在15年的ICCV上的</p>
+<p>C3D 全称Convolutional 3D，即3D卷积。3D卷积方法是把视频划分成很多固定长度的片段(clip)，相比2D卷积，3D卷积可以提取<strong>连续帧之间的运动信息</strong>，换句话说，<strong>3D卷积将视频多帧进行融合</strong>。</p>
+<p>是视频领域最早提出的3D卷积模型</p>
+<p>所有层使用3×3×3的小卷积核</p>
+<p>这个网络的结构非常简单，就是卷积层池化层不断堆叠，原文中的输入是一个112x112x16的视频片段</p>
+<p>实验效果：UCF101-85.2% 可以看出其在UCF101上的效果距离two stream方法还有不小差距。         我认为这主要是网络结构造成的，C3D中的网络结构为自己设计的简单结构</p>
+<p>UFC101是一个视频数据集，由 13,320 个视频片段组成，分为 101 个类别。这 101 个类别可分为 5 种类型（身体运动、人与人互动、人与物体互动、演奏乐器和运动）</p>
+<p>同时期发表在NIPS上的双流网络开山之作</p>
+<p><a href="https://www.bilibili.com/video/BV1mq4y1x7RU/?spm_id_from=333.788" target="_blank" rel="noopener noreffer">https://www.bilibili.com/video/BV1mq4y1x7RU/?spm_id_from=333.788</a></p>
+<p>双流网络在当时一直要比3D神经网络的结果要好</p>
+<p>导致那段时间C3D以包括整个三维卷积在这种问题上用的都不是很多</p>
+<p>p4 双流网络</p>
+<p><a href="https://blog.csdn.net/Tian__Gao/article/details/120907883" target="_blank" rel="noopener noreffer">https://blog.csdn.net/Tian__Gao/article/details/120907883</a></p>
+<p>由空间和时间两个维度的网络组成</p>
+<p>空间网络就是普通的图片RGB信息</p>
+<p>光流就是抽取光的流动，也就是指视频里每个物体运动的轨迹，包含了物体运动的信息在里面</p>
+<p>optical flow(光流)：提取出物体运动的方向和速度,颜色表示方向，亮度表示速度。</p>
+<p>两个网络各司其职 各学个的</p>
+<p>空间流和时间流分别经过softmax后做class score fusion 实际上就是求一个加权平均
+(1)求平均
+(2)以L2正则化的softmax输出作为特征，训练多分类线性SVM</p>
+<p>因为重点是讲三维卷积 所以光流这块如果有同学好奇是怎么实现的可以自己了解一下</p>
+<p>p5  I3D</p>
+<p><a href="https://www.bilibili.com/video/BV1tY4y1p7hq?spm_id_from=333.999.0.0" target="_blank" rel="noopener noreffer">https://www.bilibili.com/video/BV1tY4y1p7hq?spm_id_from=333.999.0.0</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/84956905" target="_blank" rel="noopener noreffer">https://zhuanlan.zhihu.com/p/84956905</a></p>
+<p>前面介绍了三种视频理解中常用的方法</p>
+<p>C3D明显不如双流网络 但是15-17年左右因为imagenet的存在CNN发展很快 出现了resnet等等一系列很强的CNN</p>
+<p>所以我接下来将主要介绍这个I3D 也就是如何让3维卷积在这个领域又站起来了的一篇文章</p>
+<p>首先咱们先看一下d</p>
+<p>d这个网络是CVPR2016上有人把3D和双流结合在一起 一开始是按双流的模式做 输入的2Dcnn 和c是完全一样的 但是c在最后直接求了个加权平均 d是把加权平均用一个比较小的3Dcnn替代了</p>
+<p>I3D的方法就是这个e  deepmind提出 发表在CVPR2017  双流I3D网络 至于为什么要加双流 是因为发现加了效果更好（而且二作就是双流网络的作者 而且3Dcnn也不是万能的 有很多东西学不到 如果能加一个光流去帮他一下 效果会更好</p>
+<p>因为每一层都是3dcnn了 所以在最后也没必要用一个3dcnn来做融合了 所以直接用了一个加权平均</p>
+<p>这样看起来只是把C3D和双流合在一起了 但是双流网络对这篇文章来说只是辅助作用</p>
+<p>I3D的精髓在于这个I inflated</p>
+<p>p6 I3D原理</p>
+<p>首先通过inflate把2D模型膨胀到3D，之后通过bootstrap把imagenet上的预训练用在3D模型上</p>
+<p>inflat 直接暴力变3D 原理也很简单 就是把2D网络的所有3x3的kernel或者pooling 变成3x3x3 然后一个针对视频理解的网络就生成了 这个技术一直到现在也很多在用 比如说TimeSformer就是把ViT做了inflate</p>
+<p>bootstrap</p>
+<p>字面意义上是引导 就是说 当你有一个东西以后 你在这个东西之上再去做一些改进 让这个东西变得更好 在这里的意思是说如何从一个2D imagenet训练好的模型出发 让他去初始化一个3D模型 然后在这个初始化好的模型上做训练让它变得更好</p>
+<p>作者这里用的方法是将同一个图片反复复制粘贴变成一个视频 然后把所有的2Dfilter在时间维度上也复制粘贴N次 就跟输入视频对应起来了</p>
+<p>原来是一张图片(x)对应一个2Dcnn(w) 现在是N张图片(nx)对应一个3Dcnn(w)</p>
+<p>为了让输出的结果保持一致 所以在filter上除以n 这样输出结果依然是wx</p>
+<p>p7 I3D结构</p>
+<p>作者在论文里用的网络是Inception-v1 ，是因为当时那个年代有人做过一些消融实验表明 inception的结果是比resnet稍微好一点，不过后来因为resnet的统治地位，作者还是用resnet实现了I3D并且之后大部分应用I3D的可能都是用的resnet</p>
+<p>I3D原文用的就是一个inception-v1 不过是被inflated过的</p>
+<p>maxpooling这里作者做了改动 原先的是3x3 步长是2x2 按原文来说应该变成3x3x3和2x2x2</p>
+<p>但是作者发现在时间维度上最好不要做这种下采样 所以这里用了1x3x3 这样保证输入和输出帧数相同</p>
+<p>只是在后面的几次pooling里做了下采样</p>
+<p>至于中间的这些inception module如右图所示 这个和之前的完全一致 只是卷积核变成了三维</p>
+<p>p8 实验结果</p>
+<p>这篇文章还自己提出了一个数据集 他们先拿自己的数据集做预训练 再在UCF-101上做微调 直接在UCF-101上刷到了97%</p>
+<p>每次输入的 帧数 时间</p>
+<p>测试的时候使用的是整个视频 所以是10s 因为除不尽3dcnn必须是连续帧 除不尽 所以取了9.6s</p>
+<p>结果上可以看出双流网络的结果是远好于3D的 而且不管图像还是光流哪个好 结合起来的结果都会更好</p>
+<h3 id="31-3d目标检测-voxnet">3.1 3D目标检测-VoxNet</h3>
+<p>数据集：https://paperswithcode.com/dataset/kitti</p>
+<p><a href="https://blog.csdn.net/qq_39523365/article/details/123182486" target="_blank" rel="noopener noreffer">https://blog.csdn.net/qq_39523365/article/details/123182486</a></p>
+<p>p1</p>
+<p>3D目标检测目前主要的应用场景就是<a href="https://so.csdn.net/so/search?q=%e8%87%aa%e5%8a%a8%e9%a9%be%e9%a9%b6&amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener noreffer">自动驾驶</a>，自动驾驶车不仅仅需要识别障碍物的类型，还需要识别物体的精确位置和朝向。以提供信息给规划控制模块，规划出合理的线路。3D目标检测旨在通过多传感器数据如LIDAR、Camera、RADAR等，使得自动驾驶车辆具备检测车辆、行人、障碍物等物体的能力，保障行驶安全，是自动驾驶领域要解决的核心问题之一。
+普通2D目标检测并不能提供感知环境所需要的全部信息，仅能提供目标物体在二维图片中的位置和对应类别的置信度，而3D目标检测结合了深度信息，能够提供目标的位置、方向和大小等空间场景信息，这些对于后续自动驾驶场景中的路径规划和控制至关重要。</p>
+<p>p2</p>
+<p>3D目标检测方法无外乎以下几种。</p>
+<p>根据输入类型（传感器种类）来划分，</p>
+<p>目前3D目标检测的方法分为：单模（Lidar、Camera）多模（Lidar+Camera、Radar+Camera）</p>
+<p>根据特征提取的方法来划分，主要分为以下4种。</p>
+<p>Point Clouds - 基于原始点进行特征提取</p>
+<p>Voxel - 把点云划分成一个个的网格，然后提取网格的特征</p>
+<p>Graph - 利用图的方式，对半径R内的点建立图，然后提取特征</p>
+<p>2D View - 把3D投影到2D平面，大部分采用BEV视角，然后用2D卷积提取特征</p>
+<p>下图分别描述了上述4种特征提取方式</p>
+<p>因为我们的重点主要在3D卷积的应用 所以这里不细介绍每种方法了</p>
+<p>p3  点云</p>
+<p>p4 voxelnet</p>
+<p><a href="https://paperswithcode.com/paper/voxelnet-end-to-end-learning-for-point-cloud" target="_blank" rel="noopener noreffer">https://paperswithcode.com/paper/voxelnet-end-to-end-learning-for-point-cloud</a></p>
+<p><a href="https://blog.csdn.net/weixin_40805392/article/details/99549300" target="_blank" rel="noopener noreffer">https://blog.csdn.net/weixin_40805392/article/details/99549300</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/440142506" target="_blank" rel="noopener noreffer">https://zhuanlan.zhihu.com/p/440142506</a></p>
+<p>这篇文章是一篇苹果发布在CVPR18年的<a href="https://so.csdn.net/so/search?q=%e7%82%b9%e4%ba%91&amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener noreffer">点云</a>检测方面的文章，这一篇文章算是第一篇只用点云去做3D检测的文章，</p>
+<p>p4 voxnet 结构</p>
+<p><a href="https://zhuanlan.zhihu.com/p/65420219" target="_blank" rel="noopener noreffer">https://zhuanlan.zhihu.com/p/65420219</a></p>
+<p>p5 voxnet 详细介绍</p>
+<p>occupancy grid不是这篇文章提出的 也不是本次汇报的重点</p>
+<p>我们着重看一下这个模型</p>
+<p>首先他们用了一个5x5x5 步长为2的卷积核 ……</p>
+<p>relu激活函数</p>
+<p>softmax</p>
+<p>损失函数 随机梯度下降SGD</p>
+<p>3D目标检测领域据我目前的了解 3维卷积基本上很少被用到</p>
+<p>我认为可能是一个是参数量太大 一个是效果也并没有很好</p>
+<h3 id="33-医学图像分割-3d-unet">3.3 医学图像分割-3D-UNET</h3>
+<p>p1</p>
+<p>医学图像分割</p>
+<p>p2 unet</p>
+<p>unet 15MICCAI</p>
+<p><a href="https://zhuanlan.zhihu.com/p/313283141" target="_blank" rel="noopener noreffer">https://zhuanlan.zhihu.com/p/313283141</a></p>
+<p><a href="https://www.bilibili.com/video/BV1v7411Z7b9?spm_id_from=333.337.search-card.all.click" target="_blank" rel="noopener noreffer">https://www.bilibili.com/video/BV1v7411Z7b9?spm_id_from=333.337.search-card.all.click</a></p>
+<p>U-Net和FCN非常的相似，U-Net比FCN稍晚提出来，但都发表在2015年，和FCN相比，U-Net的第一个特点是完全对称，也就是左边和右边是很类似的，而FCN的decoder相对简单，只用了一个deconvolution的操作，之后并没有跟上卷积结构。第二个区别就是skip connection，FCN用的是加操作（summation），U-Net用的是叠操作（concatenation）。这些都是细节，重点是它们的结构用了一个比较经典的思路，也就是编码和解码（encoder-decoder），早在2006年就被Hinton大神提出来发表在了nature上.</p>
+<p>unet模型分成左侧的下采样部分（特征提取）和右侧的上采样部分</p>
+<p>下采样</p>
+<p>常规的两次3<em>3卷积、RELU激活层、2</em>2的maxpooling</p>
+<p>上采样</p>
+<p>2<em>2的反卷积，特征拼接（融合）、常规的两次3</em>3卷积、RELU激活层</p>
+<p>每次下采样会将特征图的通道数增加为之前的两倍</p>
+<p>上采样过程中 每次反卷积让通道数减少为之前的一半 图像长宽翻倍</p>
+<p>并且上采样对应的下采样的特征进行连接 论文中叫做concatenate</p>
+<p>通俗的解释<strong>就是下采样和上采样得到的相同尺度的特征度在通道维度上的拼接</strong></p>
+<p>FCN采用的是<strong>逐点相加</strong>，</p>
+<p>拼接操作必须保证图像大小一致 因为每次卷积都损失掉了边缘像素点 所以要对下采样输入的图像进行裁剪</p>
+<p>至于为什么不用padding 我目前的理解好像是15年的时候还没有这个概念</p>
+<p>但是UNet为了解决这个问题提出了一个overlap-tile的策略 就是上一页ppt的这个图</p>
+<p>就是相当于在目标原图上做了padding</p>
+<p>网络最后用了一个1x1的卷积  目的是将特征通道数降至特定的数量</p>
+<p>我们知道卷积核的通道数只能与该层输入图像的通道数一致 但是大小可以自定义 并且卷积核的数量与输出特征图通道数量相等  所以这里就是两个1x1大小 通道数为64的卷积核进行运算 最后得到通道数为2的分割结果</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="C:%5cUsers%5c11704%5cAppData%5cRoaming%5cTypora%5ctypora-user-images%5cimage-20220518110255242.png"
+        data-srcset="C:%5cUsers%5c11704%5cAppData%5cRoaming%5cTypora%5ctypora-user-images%5cimage-20220518110255242.png, C:%5cUsers%5c11704%5cAppData%5cRoaming%5cTypora%5ctypora-user-images%5cimage-20220518110255242.png 1.5x, C:%5cUsers%5c11704%5cAppData%5cRoaming%5cTypora%5ctypora-user-images%5cimage-20220518110255242.png 2x"
+        data-sizes="auto"
+        alt="C:\Users\11704\AppData\Roaming\Typora\typora-user-images\image-20220518110255242.png"
+        title="image-20220518110255242" /></p>
+<p>p3 反卷积</p>
+<p>这里再简单介绍一下反卷积</p>
+<p>上面提到反卷积就能让图像的尺寸放大 假设我们的原图是4x4 卷积核是3x3 步长为一 得到一个2x2的矩阵</p>
+<p>在实际操作过程中卷积可以转化成为矩阵的点乘  也权值乘积的累加</p>
+<p>我们将原图表示为X 将他拉成为一个16x1的矩阵  那卷积过程就可以等于W点成乘X 得到的是一个4X1大小的矩阵Y</p>
+<p>反卷积就可以表示成W转置乘以Y 最后得到一个16X1的矩阵 这个矩阵不是X 但是他将图像放大了两倍</p>
+<p>p4 损失函数</p>
+<p>通过计算在最后特征图是softmax的输出结果 计算交叉熵损失函数以此来获得 整个网络的输出</p>
+<p>softmax输出层的计算方式如下</p>
+<p>整个式子的结果就是像素点x的分类</p>
+<p>能力函数如下所示 这里使用的是加权损失函数 每个像素点的权重就是w(x)  l代表的是每个像素的真实标签</p>
+<p>w(x)的计算方式如下</p>
+<p>引入这个权重的目的是为了让离边界越近的像素点权重越大 让网络更注重学习细胞边缘达到精准的分割</p>
+<p>p5 3d-unet</p>
+<p>简单介绍完U-NET之后咱们来回到重点 看一下3DUnet</p>
+<p>3D-UNET 16MICCAI deepmind</p>
+<p>3D的结构和基本原理和2D的大致一样 只是用3D卷积替换了2D的</p>
+<p>论文中使用的输入图像的大小是132 * 132 * 116 输出是44×44×28</p>
+<p>每一层神经网络都包含了两个 3 * 3 * 3的卷积(convolution)</p>
+<p>Batch Normalization（为了让网络能更好的收敛convergence）ReLU</p>
+<p>upconvolution: 2 * 2 * 2，步长=2</p>
+<p>两个正常的卷积操作：3 * 3 * 3</p>
+<p>c. Batch Normalization</p>
+<p>d. ReLU</p>
+<p>论文针对肾脏的生物医学影像的分割结果达到了IoU=86.3%的结果。3D U-Net的诞生在医学影像分割，特别是那些volumetric images都是由很大帮助的，因为它很大程度上解决了3D图像一个个slice送入模型进行训练的尴尬局面，也大幅度的提升训练效率，并且保留了FCN和U-Net本来具备的优秀特征。在这里附上一个个人看到不错的代码实现（非原作者的，原作是用Caffe实现的）：https://github.com/ellisdg/3DUnetCNN</p>
+<p>p6 3d-unet的结果</p>
+<p>IoU指标就是大家常说的交并比，在语义分割中作为标准度量一直被人使用。交并比不仅仅在语义分割中使用，在目标检测等方向也是常用的指标之一。</p>
+<h2 id="四实验">四、实验</h2>
+<p>出于好奇心并且结合我自己的研究方向我把这几个模型在不属于他们的领域都跑了一下</p>
+<p>数据集</p>
+<p>模型构建</p>
+<p>参数选择</p>
+<pre tabindex="0"><code>loss_function = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), 1e-5)
+epochs = 50
+</code></pre><p>实验结果</p>
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>VoxNet</th>
+<th>C3D</th>
+<th>I3D(resnet)</th>
+<th>I3D(inception-v1)</th>
+<th>Unet(downsampling)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>input_size</td>
+<td>(64,64,64)</td>
+<td>(64,112,112)</td>
+<td>(64,224,224)</td>
+<td>(64,224,224)</td>
+<td>(64,64,64)</td>
+</tr>
+<tr>
+<td>acc</td>
+<td>0.78</td>
+<td>0.87</td>
+<td></td>
+<td>0.69</td>
+<td>0.84</td>
+</tr>
+</tbody>
+</table>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-06-07</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" data-title="三维卷积"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" data-title="三维卷积"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" data-title="三维卷积"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://ingffwe.github.io/posts/%E4%B8%89%E7%BB%B4%E5%8D%B7%E7%A7%AF/" data-title="三维卷积" data-ralateuid="u/6588406606"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/first_post/" class="prev" rel="prev" title="First_post"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>First_post</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.100.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">起司</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
