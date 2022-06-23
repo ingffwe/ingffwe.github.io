@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Tags - Tag - 起司其四的个人主页</title>
+        <title>Tags - Tag - Finn Wei的个人主页</title>
         <link>https://ingffwe.github.io/tags/</link>
-        <description>Tags - Tag - 起司其四的个人主页</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>1170411311@qq.com (起司)</managingEditor>
-            <webMaster>1170411311@qq.com (起司)</webMaster><atom:link href="https://ingffwe.github.io/tags/" rel="self" type="application/rss+xml" /><item>
+        <description>Tags - Tag - Finn Wei的个人主页</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>1170411311@qq.com (Finn)</managingEditor>
+            <webMaster>1170411311@qq.com (Finn)</webMaster><atom:link href="https://ingffwe.github.io/tags/" rel="self" type="application/rss+xml" /><item>
     <title>内容</title>
     <link>https://ingffwe.github.io/tags/content/</link>
     <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>起司</author>
+    <author>Finn</author>
     <guid>https://ingffwe.github.io/tags/content/</guid>
     <description><![CDATA[]]></description>
 </item>
@@ -16,7 +16,7 @@
     <title>安装</title>
     <link>https://ingffwe.github.io/tags/installation/</link>
     <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>起司</author>
+    <author>Finn</author>
     <guid>https://ingffwe.github.io/tags/installation/</guid>
     <description><![CDATA[]]></description>
 </item>
@@ -24,7 +24,7 @@
     <title>配置</title>
     <link>https://ingffwe.github.io/tags/configuration/</link>
     <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>起司</author>
+    <author>Finn</author>
     <guid>https://ingffwe.github.io/tags/configuration/</guid>
     <description><![CDATA[]]></description>
 </item>
